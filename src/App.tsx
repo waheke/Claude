@@ -7,6 +7,7 @@ import type { ParseResult, Priority, Requirement } from './types';
 import { detectPriority, rewritePriorityWord } from './lib/priority';
 import { downloadCsv } from './lib/exportCsv';
 import { exportNodeToPdf } from './lib/exportPdf';
+import { exportNodeToPng } from './lib/exportPng';
 
 function uniqueInOrder(values: string[]): string[] {
   const seen = new Set<string>();
@@ -24,11 +25,16 @@ const MIN_ZOOM = 0.4;
 const MAX_ZOOM = 1.5;
 const ZOOM_STEP = 0.1;
 
+function clampZoom(zoom: number): number {
+  return Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, Math.round(zoom * 100) / 100));
+}
+
 export default function App() {
   const [requirements, setRequirements] = useState<Requirement[] | null>(null);
   const [epics, setEpics] = useState<string[]>([]);
   const [warnings, setWarnings] = useState<string[]>([]);
   const [isExportingPdf, setIsExportingPdf] = useState(false);
+  const [isExportingPng, setIsExportingPng] = useState(false);
   const [zoom, setZoom] = useState(1);
 
   function handleImport(result: ParseResult) {
@@ -86,12 +92,20 @@ export default function App() {
     setRequirements((prev) => (prev ? [...prev, newRequirement] : [newRequirement]));
   }
 
+  function handleZoomBy(delta: number) {
+    setZoom((z) => clampZoom(z + delta));
+  }
+
+  function handleZoomScale(factor: number) {
+    setZoom((z) => clampZoom(z * factor));
+  }
+
   function handleZoomIn() {
-    setZoom((z) => Math.min(MAX_ZOOM, Math.round((z + ZOOM_STEP) * 100) / 100));
+    handleZoomBy(ZOOM_STEP);
   }
 
   function handleZoomOut() {
-    setZoom((z) => Math.max(MIN_ZOOM, Math.round((z - ZOOM_STEP) * 100) / 100));
+    handleZoomBy(-ZOOM_STEP);
   }
 
   function handleZoomReset() {
@@ -109,19 +123,36 @@ export default function App() {
     downloadCsv(requirements);
   }
 
-  async function handleExportPdf() {
+  /** Runs a board capture at 100% zoom regardless of the current on-screen zoom, restoring it after. */
+  async function captureBoardAtFullZoom(capture: (node: HTMLElement) => Promise<void>) {
     const node = document.getElementById('board-capture');
     if (!node) return;
-    setIsExportingPdf(true);
     const previousZoom = zoom;
     setZoom(1);
     try {
       // Let the zoom reset reflow and paint before capturing.
       await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-      await exportNodeToPdf(node);
+      await capture(node);
     } finally {
       setZoom(previousZoom);
+    }
+  }
+
+  async function handleExportPdf() {
+    setIsExportingPdf(true);
+    try {
+      await captureBoardAtFullZoom(exportNodeToPdf);
+    } finally {
       setIsExportingPdf(false);
+    }
+  }
+
+  async function handleExportPng() {
+    setIsExportingPng(true);
+    try {
+      await captureBoardAtFullZoom(exportNodeToPng);
+    } finally {
+      setIsExportingPng(false);
     }
   }
 
@@ -137,8 +168,10 @@ export default function App() {
             warnings={warnings}
             onExportCsv={handleExportCsv}
             onExportPdf={handleExportPdf}
+            onExportPng={handleExportPng}
             onStartOver={handleStartOver}
             isExportingPdf={isExportingPdf}
+            isExportingPng={isExportingPng}
             zoom={zoom}
             onZoomIn={handleZoomIn}
             onZoomOut={handleZoomOut}
@@ -151,6 +184,8 @@ export default function App() {
             onEdit={handleEditRequirement}
             onAdd={handleAddRequirement}
             zoom={zoom}
+            onZoomBy={handleZoomBy}
+            onZoomScale={handleZoomScale}
           />
         </main>
       )}

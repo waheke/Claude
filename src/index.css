@@ -58,8 +58,6 @@ a:visited {
 /* NHS-style focus state: yellow background, black text, solid black outline */
 a:focus,
 button:focus,
-input:focus,
-textarea:focus,
 [tabindex]:focus {
   outline: 4px solid var(--nhsuk-yellow);
   outline-offset: 0;
@@ -67,6 +65,15 @@ textarea:focus,
   color: var(--nhsuk-black);
   box-shadow: 0 -2px var(--nhsuk-yellow), 0 4px var(--nhsuk-black);
   text-decoration: none;
+}
+
+/* Text fields get a clear but non-disruptive focus style, since the
+   yellow fill above would obscure text while actively typing. */
+input:focus,
+textarea:focus {
+  outline: 3px solid var(--nhsuk-blue);
+  outline-offset: 0;
+  border-color: var(--nhsuk-blue);
 }
 
 button {

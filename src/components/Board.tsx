@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import type { Priority, Requirement } from '../types';
 import { parseCellId } from '../lib/cellId';
+import { usePinchZoom } from '../hooks/usePinchZoom';
 import { EpicColumn } from './EpicColumn';
 import { CardContent } from './Card';
 
@@ -13,11 +14,16 @@ interface BoardProps {
   onEdit: (id: string, featureName: string, requirementText: string) => void;
   onAdd: (epic: string, priority: Priority, featureName: string, requirementText: string) => void;
   zoom: number;
+  onZoomBy: (delta: number) => void;
+  onZoomScale: (factor: number) => void;
 }
 
-export function Board({ requirements, epics, onMove, onEdit, onAdd, zoom }: BoardProps) {
+export function Board({ requirements, epics, onMove, onEdit, onAdd, zoom, onZoomBy, onZoomScale }: BoardProps) {
   const [activeRequirement, setActiveRequirement] = useState<Requirement | null>(null);
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
+  const boardRef = useRef<HTMLDivElement>(null);
+
+  usePinchZoom(boardRef, { onZoomBy, onZoomScale });
 
   function handleDragStart(event: DragStartEvent) {
     const requirement = event.active.data.current?.requirement as Requirement | undefined;
@@ -35,7 +41,7 @@ export function Board({ requirements, epics, onMove, onEdit, onAdd, zoom }: Boar
 
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="board" id="board-capture" style={{ zoom }}>
+      <div className="board" id="board-capture" ref={boardRef} style={{ zoom }}>
         {epics.map((epic) => (
           <EpicColumn
             key={epic}

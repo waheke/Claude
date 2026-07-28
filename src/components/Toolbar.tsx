@@ -3,8 +3,10 @@ interface ToolbarProps {
   warnings: string[];
   onExportCsv: () => void;
   onExportPdf: () => void;
+  onExportPng: () => void;
   onStartOver: () => void;
   isExportingPdf: boolean;
+  isExportingPng: boolean;
   zoom: number;
   onZoomIn: () => void;
   onZoomOut: () => void;
@@ -16,8 +18,10 @@ export function Toolbar({
   warnings,
   onExportCsv,
   onExportPdf,
+  onExportPng,
   onStartOver,
   isExportingPdf,
+  isExportingPng,
   zoom,
   onZoomIn,
   onZoomOut,
@@ -49,6 +53,9 @@ export function Toolbar({
           </button>
           <button type="button" className="nhsuk-button nhsuk-button--secondary" onClick={onExportCsv}>
             Export CSV
+          </button>
+          <button type="button" className="nhsuk-button nhsuk-button--secondary" onClick={onExportPng} disabled={isExportingPng}>
+            {isExportingPng ? 'Generating PNG…' : 'Export PNG'}
           </button>
           <button type="button" className="nhsuk-button" onClick={onExportPdf} disabled={isExportingPdf}>
             {isExportingPdf ? 'Generating PDF…' : 'Export PDF'}
