@@ -192,8 +192,41 @@
 
 .toolbar__actions {
   display: flex;
+  align-items: center;
   gap: 12px;
   flex-wrap: wrap;
+}
+
+.zoom-control {
+  display: flex;
+  align-items: center;
+  border: 2px solid var(--nhsuk-grey-3);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.zoom-control__button,
+.zoom-control__level {
+  background: var(--nhsuk-white);
+  border: none;
+  color: var(--nhsuk-black);
+  font-family: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 8px 12px;
+  line-height: 1;
+}
+
+.zoom-control__button:hover,
+.zoom-control__level:hover {
+  background: var(--nhsuk-grey-5);
+}
+
+.zoom-control__level {
+  min-width: 56px;
+  border-left: 2px solid var(--nhsuk-grey-3);
+  border-right: 2px solid var(--nhsuk-grey-3);
+  font-weight: 400;
 }
 
 /* Board */
@@ -286,6 +319,27 @@
   padding: 12px;
 }
 
+.add-card-button {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding: 8px;
+  background: none;
+  border: 2px dashed var(--nhsuk-grey-3);
+  border-radius: 4px;
+  color: var(--nhsuk-grey-1);
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.add-card-button:hover {
+  border-color: var(--nhsuk-blue);
+  color: var(--nhsuk-blue);
+  background: var(--nhsuk-white);
+}
+
 /* Feature cards */
 .feature-card {
   padding: 12px;
@@ -331,20 +385,24 @@
 
 .feature-card__edit-button {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
   background: none;
   border: none;
-  color: var(--nhsuk-blue);
-  font-size: 13px;
-  font-weight: 700;
-  text-decoration: underline;
+  border-radius: 4px;
+  color: var(--nhsuk-grey-2);
   cursor: pointer;
-  padding: 2px 4px;
+  padding: 0;
 }
 
 .feature-card__edit-button:hover {
-  color: var(--nhsuk-dark-blue);
+  color: var(--nhsuk-grey-1);
+  background: var(--nhsuk-grey-5);
 }
 
 .feature-card--editing {

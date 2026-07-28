@@ -20,11 +20,16 @@ function uniqueInOrder(values: string[]): string[] {
   return result;
 }
 
+const MIN_ZOOM = 0.4;
+const MAX_ZOOM = 1.5;
+const ZOOM_STEP = 0.1;
+
 export default function App() {
   const [requirements, setRequirements] = useState<Requirement[] | null>(null);
   const [epics, setEpics] = useState<string[]>([]);
   const [warnings, setWarnings] = useState<string[]>([]);
   const [isExportingPdf, setIsExportingPdf] = useState(false);
+  const [zoom, setZoom] = useState(1);
 
   function handleImport(result: ParseResult) {
     setRequirements(result.requirements);
@@ -68,6 +73,31 @@ export default function App() {
     });
   }
 
+  function handleAddRequirement(epic: string, priority: Priority, featureName: string, requirementText: string) {
+    const detected = detectPriority(requirementText);
+    const newRequirement: Requirement = {
+      id: crypto.randomUUID(),
+      epic,
+      featureName,
+      requirementText,
+      priority: detected ?? priority,
+      priorityInferred: !detected,
+    };
+    setRequirements((prev) => (prev ? [...prev, newRequirement] : [newRequirement]));
+  }
+
+  function handleZoomIn() {
+    setZoom((z) => Math.min(MAX_ZOOM, Math.round((z + ZOOM_STEP) * 100) / 100));
+  }
+
+  function handleZoomOut() {
+    setZoom((z) => Math.max(MIN_ZOOM, Math.round((z - ZOOM_STEP) * 100) / 100));
+  }
+
+  function handleZoomReset() {
+    setZoom(1);
+  }
+
   function handleStartOver() {
     setRequirements(null);
     setEpics([]);
@@ -83,9 +113,14 @@ export default function App() {
     const node = document.getElementById('board-capture');
     if (!node) return;
     setIsExportingPdf(true);
+    const previousZoom = zoom;
+    setZoom(1);
     try {
+      // Let the zoom reset reflow and paint before capturing.
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
       await exportNodeToPdf(node);
     } finally {
+      setZoom(previousZoom);
       setIsExportingPdf(false);
     }
   }
@@ -104,12 +139,18 @@ export default function App() {
             onExportPdf={handleExportPdf}
             onStartOver={handleStartOver}
             isExportingPdf={isExportingPdf}
+            zoom={zoom}
+            onZoomIn={handleZoomIn}
+            onZoomOut={handleZoomOut}
+            onZoomReset={handleZoomReset}
           />
           <Board
             requirements={requirements}
             epics={epics}
             onMove={handleMove}
             onEdit={handleEditRequirement}
+            onAdd={handleAddRequirement}
+            zoom={zoom}
           />
         </main>
       )}

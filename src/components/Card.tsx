@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { KeyboardEvent } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import type { Requirement } from '../types';
+import { EditIcon } from './icons';
 
 interface CardProps {
   requirement: Requirement;
@@ -131,8 +132,9 @@ export function Card({ requirement, onEdit }: EditableCardProps) {
           startEditing();
         }}
         aria-label={`Edit ${requirement.featureName}`}
+        title="Edit"
       >
-        Edit
+        <EditIcon />
       </button>
       <CardContent requirement={requirement} />
     </div>

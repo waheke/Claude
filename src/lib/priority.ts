@@ -41,6 +41,11 @@ export function rewritePriorityWord(requirementText: string, newPriority: Priori
   return requirementText.slice(0, match[1].length) + cased + requirementText.slice(match[1].length + original.length);
 }
 
+/** A starting sentence template for a new requirement in the given priority row. */
+export function templateForPriority(priority: Priority): string {
+  return `The system ${PRIORITY_TO_WORD[priority]} `;
+}
+
 function matchCase(sample: string, word: string): string {
   if (sample === sample.toUpperCase()) return word.toUpperCase();
   if (sample[0] === sample[0].toUpperCase()) return word[0].toUpperCase() + word.slice(1);

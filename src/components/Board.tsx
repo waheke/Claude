@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { DndContext, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
-import type { Requirement } from '../types';
+import type { Priority, Requirement } from '../types';
 import { parseCellId } from '../lib/cellId';
 import { EpicColumn } from './EpicColumn';
 import { CardContent } from './Card';
@@ -11,9 +11,11 @@ interface BoardProps {
   epics: string[];
   onMove: (requirementId: string, targetEpic: string, targetPriority: Requirement['priority']) => void;
   onEdit: (id: string, featureName: string, requirementText: string) => void;
+  onAdd: (epic: string, priority: Priority, featureName: string, requirementText: string) => void;
+  zoom: number;
 }
 
-export function Board({ requirements, epics, onMove, onEdit }: BoardProps) {
+export function Board({ requirements, epics, onMove, onEdit, onAdd, zoom }: BoardProps) {
   const [activeRequirement, setActiveRequirement] = useState<Requirement | null>(null);
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
 
@@ -33,13 +35,14 @@ export function Board({ requirements, epics, onMove, onEdit }: BoardProps) {
 
   return (
     <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="board" id="board-capture">
+      <div className="board" id="board-capture" style={{ zoom }}>
         {epics.map((epic) => (
           <EpicColumn
             key={epic}
             epic={epic}
             requirements={requirements.filter((r) => r.epic === epic)}
             onEdit={onEdit}
+            onAdd={onAdd}
           />
         ))}
       </div>

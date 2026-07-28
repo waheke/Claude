@@ -2,15 +2,17 @@ import { useDroppable } from '@dnd-kit/core';
 import type { Priority, Requirement } from '../types';
 import { makeCellId } from '../lib/cellId';
 import { Card } from './Card';
+import { AddCardForm } from './AddCardForm';
 
 interface PriorityCellProps {
   epic: string;
   priority: Priority;
   requirements: Requirement[];
   onEdit: (id: string, featureName: string, requirementText: string) => void;
+  onAdd: (epic: string, priority: Priority, featureName: string, requirementText: string) => void;
 }
 
-export function PriorityCell({ epic, priority, requirements, onEdit }: PriorityCellProps) {
+export function PriorityCell({ epic, priority, requirements, onEdit, onAdd }: PriorityCellProps) {
   const cellId = makeCellId(epic, priority);
   const { setNodeRef, isOver } = useDroppable({ id: cellId, data: { epic, priority } });
 
@@ -28,6 +30,7 @@ export function PriorityCell({ epic, priority, requirements, onEdit }: PriorityC
           <Card key={req.id} requirement={req} onEdit={onEdit} />
         ))}
       </div>
+      <AddCardForm epic={epic} priority={priority} onAdd={onAdd} />
     </div>
   );
 }
