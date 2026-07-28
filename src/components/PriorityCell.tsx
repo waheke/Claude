@@ -7,9 +7,10 @@ interface PriorityCellProps {
   epic: string;
   priority: Priority;
   requirements: Requirement[];
+  onEdit: (id: string, featureName: string, requirementText: string) => void;
 }
 
-export function PriorityCell({ epic, priority, requirements }: PriorityCellProps) {
+export function PriorityCell({ epic, priority, requirements, onEdit }: PriorityCellProps) {
   const cellId = makeCellId(epic, priority);
   const { setNodeRef, isOver } = useDroppable({ id: cellId, data: { epic, priority } });
 
@@ -24,7 +25,7 @@ export function PriorityCell({ epic, priority, requirements }: PriorityCellProps
       >
         {requirements.length === 0 && <span className="priority-row__placeholder">Drop here</span>}
         {requirements.map((req) => (
-          <Card key={req.id} requirement={req} />
+          <Card key={req.id} requirement={req} onEdit={onEdit} />
         ))}
       </div>
     </div>

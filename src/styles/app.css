@@ -325,7 +325,65 @@
 .feature-card__name {
   font-weight: 700;
   margin: 0 0 6px;
+  padding-right: 36px;
   font-size: 15px;
+}
+
+.feature-card__edit-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: var(--nhsuk-blue);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+.feature-card__edit-button:hover {
+  color: var(--nhsuk-dark-blue);
+}
+
+.feature-card--editing {
+  cursor: default;
+}
+
+.feature-card__name-input {
+  display: block;
+  width: 100%;
+  font-weight: 700;
+  font-size: 15px;
+  font-family: inherit;
+  padding: 6px;
+  margin-bottom: 8px;
+  border: 2px solid var(--nhsuk-grey-2);
+  border-radius: 4px;
+}
+
+.feature-card__requirement-input {
+  display: block;
+  width: 100%;
+  font-size: 14px;
+  font-family: inherit;
+  padding: 6px;
+  margin-bottom: 8px;
+  border: 2px solid var(--nhsuk-grey-2);
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.feature-card__edit-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.nhsuk-button--small {
+  padding: 6px 12px;
+  font-size: 14px;
+  box-shadow: none;
 }
 
 .feature-card__requirement {

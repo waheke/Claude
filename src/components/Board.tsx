@@ -10,9 +10,10 @@ interface BoardProps {
   requirements: Requirement[];
   epics: string[];
   onMove: (requirementId: string, targetEpic: string, targetPriority: Requirement['priority']) => void;
+  onEdit: (id: string, featureName: string, requirementText: string) => void;
 }
 
-export function Board({ requirements, epics, onMove }: BoardProps) {
+export function Board({ requirements, epics, onMove, onEdit }: BoardProps) {
   const [activeRequirement, setActiveRequirement] = useState<Requirement | null>(null);
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
 
@@ -38,6 +39,7 @@ export function Board({ requirements, epics, onMove }: BoardProps) {
             key={epic}
             epic={epic}
             requirements={requirements.filter((r) => r.epic === epic)}
+            onEdit={onEdit}
           />
         ))}
       </div>

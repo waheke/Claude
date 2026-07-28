@@ -4,7 +4,7 @@ import { ImportPanel } from './components/ImportPanel';
 import { Toolbar } from './components/Toolbar';
 import { Board } from './components/Board';
 import type { ParseResult, Priority, Requirement } from './types';
-import { rewritePriorityWord } from './lib/priority';
+import { detectPriority, rewritePriorityWord } from './lib/priority';
 import { downloadCsv } from './lib/exportCsv';
 import { exportNodeToPdf } from './lib/exportPdf';
 
@@ -51,6 +51,23 @@ export default function App() {
     });
   }
 
+  function handleEditRequirement(requirementId: string, featureName: string, requirementText: string) {
+    setRequirements((prev) => {
+      if (!prev) return prev;
+      return prev.map((req) => {
+        if (req.id !== requirementId) return req;
+        const detected = detectPriority(requirementText);
+        return {
+          ...req,
+          featureName,
+          requirementText,
+          priority: detected ?? req.priority,
+          priorityInferred: !detected,
+        };
+      });
+    });
+  }
+
   function handleStartOver() {
     setRequirements(null);
     setEpics([]);
@@ -88,7 +105,12 @@ export default function App() {
             onStartOver={handleStartOver}
             isExportingPdf={isExportingPdf}
           />
-          <Board requirements={requirements} epics={epics} onMove={handleMove} />
+          <Board
+            requirements={requirements}
+            epics={epics}
+            onMove={handleMove}
+            onEdit={handleEditRequirement}
+          />
         </main>
       )}
     </div>
