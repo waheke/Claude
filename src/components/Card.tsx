@@ -3,6 +3,7 @@ import type { KeyboardEvent } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import type { Requirement } from '../types';
 import { EditIcon } from './icons';
+import { OwnerBadge } from './OwnerBadge';
 
 interface CardProps {
   requirement: Requirement;
@@ -24,9 +25,11 @@ export function CardContent({ requirement }: CardProps) {
 
 interface EditableCardProps extends CardProps {
   onEdit: (id: string, featureName: string, requirementText: string) => void;
+  owners: string[];
+  onChangeOwner: (id: string, owner: string) => void;
 }
 
-export function Card({ requirement, onEdit }: EditableCardProps) {
+export function Card({ requirement, onEdit, owners, onChangeOwner }: EditableCardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [draftName, setDraftName] = useState(requirement.featureName);
   const [draftRequirement, setDraftRequirement] = useState(requirement.requirementText);
@@ -137,6 +140,11 @@ export function Card({ requirement, onEdit }: EditableCardProps) {
         <EditIcon />
       </button>
       <CardContent requirement={requirement} />
+      <OwnerBadge
+        owner={requirement.owner}
+        owners={owners}
+        onChange={(owner) => onChangeOwner(requirement.id, owner)}
+      />
     </div>
   );
 }

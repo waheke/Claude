@@ -1,7 +1,7 @@
 import type { ParseResult, Requirement } from '../types';
 import { detectPriority } from './priority';
 
-const HEADER_SYNONYMS: Record<'epic' | 'featureName' | 'requirementText', string[]> = {
+const HEADER_SYNONYMS: Record<'epic' | 'featureName' | 'requirementText' | 'owner', string[]> = {
   epic: ['epic', 'epics', 'epic name'],
   featureName: ['feature name', 'feature', 'feature names', 'short hand', 'shorthand'],
   requirementText: [
@@ -11,6 +11,7 @@ const HEADER_SYNONYMS: Record<'epic' | 'featureName' | 'requirementText', string
     'requirement',
     'requirements',
   ],
+  owner: ['owner', 'owners', 'owned by', 'assigned to'],
 };
 
 function normaliseHeader(header: string): string {
@@ -49,6 +50,7 @@ export function rowsToRequirements(rows: string[][]): ParseResult {
   const epicIdx = findColumnIndex(headerRow, HEADER_SYNONYMS.epic);
   const featureIdx = findColumnIndex(headerRow, HEADER_SYNONYMS.featureName);
   const requirementIdx = findColumnIndex(headerRow, HEADER_SYNONYMS.requirementText);
+  const ownerIdx = findColumnIndex(headerRow, HEADER_SYNONYMS.owner);
 
   if (epicIdx === -1 || featureIdx === -1 || requirementIdx === -1) {
     const missing = [
@@ -69,6 +71,7 @@ export function rowsToRequirements(rows: string[][]): ParseResult {
     const epic = (row[epicIdx] ?? '').trim();
     const featureName = (row[featureIdx] ?? '').trim();
     const requirementText = (row[requirementIdx] ?? '').trim();
+    const owner = ownerIdx === -1 ? '' : (row[ownerIdx] ?? '').trim();
 
     if (!epic && !featureName && !requirementText) continue;
 
@@ -83,6 +86,7 @@ export function rowsToRequirements(rows: string[][]): ParseResult {
       requirementText,
       priority,
       priorityInferred: !detected,
+      owner,
     });
   }
 

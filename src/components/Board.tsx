@@ -10,15 +10,28 @@ import { CardContent } from './Card';
 interface BoardProps {
   requirements: Requirement[];
   epics: string[];
+  owners: string[];
   onMove: (requirementId: string, targetEpic: string, targetPriority: Requirement['priority']) => void;
   onEdit: (id: string, featureName: string, requirementText: string) => void;
   onAdd: (epic: string, priority: Priority, featureName: string, requirementText: string) => void;
+  onChangeOwner: (id: string, owner: string) => void;
   zoom: number;
   onZoomBy: (delta: number) => void;
   onZoomScale: (factor: number) => void;
 }
 
-export function Board({ requirements, epics, onMove, onEdit, onAdd, zoom, onZoomBy, onZoomScale }: BoardProps) {
+export function Board({
+  requirements,
+  epics,
+  owners,
+  onMove,
+  onEdit,
+  onAdd,
+  onChangeOwner,
+  zoom,
+  onZoomBy,
+  onZoomScale,
+}: BoardProps) {
   const [activeRequirement, setActiveRequirement] = useState<Requirement | null>(null);
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }));
   const boardRef = useRef<HTMLDivElement>(null);
@@ -47,8 +60,10 @@ export function Board({ requirements, epics, onMove, onEdit, onAdd, zoom, onZoom
             key={epic}
             epic={epic}
             requirements={requirements.filter((r) => r.epic === epic)}
+            owners={owners}
             onEdit={onEdit}
             onAdd={onAdd}
+            onChangeOwner={onChangeOwner}
           />
         ))}
       </div>

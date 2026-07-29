@@ -57,7 +57,8 @@ export function ImportPanel({ onImport }: ImportPanelProps) {
         <p className="import-screen__intro">
           Upload a spreadsheet, or copy a table from Excel and paste it in below. Each row needs
           an <strong>Epic</strong>, a <strong>Feature Name</strong> and a{' '}
-          <strong>High Level Requirement</strong> column.
+          <strong>High Level Requirement</strong> column, plus an optional <strong>Owner</strong>{' '}
+          column.
         </p>
 
         {error && (

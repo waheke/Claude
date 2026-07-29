@@ -8,11 +8,13 @@ interface PriorityCellProps {
   epic: string;
   priority: Priority;
   requirements: Requirement[];
+  owners: string[];
   onEdit: (id: string, featureName: string, requirementText: string) => void;
   onAdd: (epic: string, priority: Priority, featureName: string, requirementText: string) => void;
+  onChangeOwner: (id: string, owner: string) => void;
 }
 
-export function PriorityCell({ epic, priority, requirements, onEdit, onAdd }: PriorityCellProps) {
+export function PriorityCell({ epic, priority, requirements, owners, onEdit, onAdd, onChangeOwner }: PriorityCellProps) {
   const cellId = makeCellId(epic, priority);
   const { setNodeRef, isOver } = useDroppable({ id: cellId, data: { epic, priority } });
 
@@ -27,7 +29,7 @@ export function PriorityCell({ epic, priority, requirements, onEdit, onAdd }: Pr
       >
         {requirements.length === 0 && <span className="priority-row__placeholder">Drop here</span>}
         {requirements.map((req) => (
-          <Card key={req.id} requirement={req} onEdit={onEdit} />
+          <Card key={req.id} requirement={req} onEdit={onEdit} owners={owners} onChangeOwner={onChangeOwner} />
         ))}
       </div>
       <AddCardForm epic={epic} priority={priority} onAdd={onAdd} />

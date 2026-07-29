@@ -10,6 +10,8 @@ export interface Requirement {
   priority: Priority;
   /** true if the priority couldn't be detected from the text and was defaulted */
   priorityInferred: boolean;
+  /** Optional; empty string means no owner assigned. */
+  owner: string;
 }
 
 export interface ParseResult {

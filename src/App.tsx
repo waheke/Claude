@@ -88,8 +88,16 @@ export default function App() {
       requirementText,
       priority: detected ?? priority,
       priorityInferred: !detected,
+      owner: '',
     };
     setRequirements((prev) => (prev ? [...prev, newRequirement] : [newRequirement]));
+  }
+
+  function handleChangeOwner(requirementId: string, owner: string) {
+    setRequirements((prev) => {
+      if (!prev) return prev;
+      return prev.map((req) => (req.id === requirementId ? { ...req, owner } : req));
+    });
   }
 
   function handleZoomBy(delta: number) {
@@ -180,9 +188,11 @@ export default function App() {
           <Board
             requirements={requirements}
             epics={epics}
+            owners={uniqueInOrder(requirements.map((r) => r.owner).filter(Boolean))}
             onMove={handleMove}
             onEdit={handleEditRequirement}
             onAdd={handleAddRequirement}
+            onChangeOwner={handleChangeOwner}
             zoom={zoom}
             onZoomBy={handleZoomBy}
             onZoomScale={handleZoomScale}

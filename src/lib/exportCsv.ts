@@ -7,13 +7,13 @@ function csvEscape(value: string): string {
   return value;
 }
 
-/** Builds CSV text matching the input structure: Epic, Feature Name, High Level Requirement. */
+/** Builds CSV text matching the input structure: Epic, Feature Name, High Level Requirement, Owner. */
 export function requirementsToCsv(requirements: Requirement[]): string {
-  const header = ['Epic', 'Feature Name', 'High Level Requirement'];
+  const header = ['Epic', 'Feature Name', 'High Level Requirement', 'Owner'];
   const lines = [header.map(csvEscape).join(',')];
   for (const req of requirements) {
     lines.push(
-      [req.epic, req.featureName, req.requirementText].map(csvEscape).join(','),
+      [req.epic, req.featureName, req.requirementText, req.owner].map(csvEscape).join(','),
     );
   }
   return lines.join('\r\n');
